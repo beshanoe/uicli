@@ -1,15 +1,15 @@
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import CompressionPlugin from "compression-webpack-plugin";
 import * as Path from "path";
 import * as webpack from "webpack";
 import { UICLINodeStuffPlugin } from "./NodeStuffPlugin";
 import { NodeSideModuleInfo, NodeSidePlugin } from "./NodeSidePlugin";
-import indexHtml from './indexHtml'
+import indexHtml from "./indexHtml";
 
 interface WebpackConfigOptions {
   mode: "dev" | "prod";
   cwd: string;
   entry: string;
-  virtuals?: { moduleName: string; moduleClient: string }[];
   nodeSideNodeModules: string[];
   onNodeSideModules(modules: { [id: string]: NodeSideModuleInfo }): void;
 }
@@ -45,9 +45,9 @@ export function createWebpackConfig(
     devtool: false,
     entry: {
       main: [
-        require.resolve("webpack-hot-middleware/client"),
+        isDev && require.resolve("webpack-hot-middleware/client"),
         `${__dirname}/entries/client`
-      ]
+      ].filter(Boolean) as string[]
     },
     output: { path: Path.join(cwd, "build") },
     resolve: {
@@ -102,6 +102,8 @@ export function createWebpackConfig(
       new HtmlWebpackPlugin({ templateContent: indexHtml() }),
 
       isDev && new webpack.HotModuleReplacementPlugin(),
+
+      !isDev && new CompressionPlugin(),
 
       new NodeSidePlugin({ nodeSideNodeModules, onNodeSideModules })
     ].filter(Boolean) as webpack.Plugin[]

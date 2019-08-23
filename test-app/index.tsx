@@ -11,7 +11,7 @@ export default function() {
     (async () => {
       setFile(
         JSON.stringify(
-          await fsNode.readFile(__dirname + "/../package.json", "utf-8")
+          await fsNode.readFile(__dirname + "/../package.json")
         )
       );
     })();

@@ -1,10 +1,9 @@
 import * as webpack from "webpack";
-import * as Path from "path";
-import * as fs from "fs-extra";
 
 export interface NodeSideModuleInfo {
+  isNodeModule?: boolean;
   modulePath: string;
-  originalPath: string;
+  content?: string;
 }
 
 const nodeSideLoaderPath = require.resolve("./nodeSideLoader");
@@ -40,21 +39,14 @@ export class NodeSidePlugin {
             lc.uicliRegisterNodeModule = (moduleId: string, source: string) => {
               if (isNodeSideNodeModule) {
                 registeredNodeSideModules[moduleId] = {
-                  modulePath: m.rawRequest,
-                  originalPath: m.rawRequest
+                  isNodeModule: true,
+                  modulePath: m.rawRequest
                 };
               } else {
                 try {
-                  const tempFileName = Path.join(
-                    process.cwd(),
-                    "build/.tmp",
-                    Path.basename(m.resource) + ".compiled.js"
-                  );
-                  fs.ensureFileSync(tempFileName);
-                  fs.writeFileSync(tempFileName, source);
                   registeredNodeSideModules[moduleId] = {
-                    modulePath: tempFileName,
-                    originalPath: m.resource
+                    modulePath: m.resource,
+                    content: source
                   };
                 } catch (error) {
                   console.log(error);

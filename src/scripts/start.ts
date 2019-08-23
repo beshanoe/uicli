@@ -1,5 +1,6 @@
 import bodyParser from "body-parser";
 import express from "express";
+import * as fs from "fs-extra";
 import * as http from "http";
 import * as Path from "path";
 import webpack from "webpack";
@@ -9,6 +10,7 @@ import * as WebSocket from "ws";
 import { createWebpackConfig } from "../webpack/createWebpackConfig";
 import { UICLIServer, wrapServer } from "../wrappers/wrap";
 import uicliMiddleware from "./uicliMiddleware";
+import tempy from "tempy";
 
 const cwdRel = (path: string) => Path.resolve(process.cwd(), path);
 
@@ -25,7 +27,6 @@ export async function start() {
     console.log("WebScoket connection is opened");
   });
 
-  let serverWrappers: UICLIServer[] = [];
   app.use(
     bodyParser.json({
       reviver: (_, value) => {
@@ -50,7 +51,8 @@ export async function start() {
       }
     })
   );
-  app.use(uicliMiddleware(() => serverWrappers));
+
+  let serverWrappers: UICLIServer[] = [];
 
   const cwd = process.cwd();
   const webpackConfig = createWebpackConfig({
@@ -61,10 +63,21 @@ export async function start() {
     onNodeSideModules(modules) {
       try {
         serverWrappers = Object.entries(modules).map(
-          ([moduleId, { modulePath, originalPath }]) =>
-            wrapServer(moduleId, require(modulePath), {
-              displayName: Path.relative(cwd, originalPath)
-            })
+          ([moduleId, { isNodeModule, modulePath, content }]) => {
+            if (!isNodeModule) {
+              const tempFileName = tempy.file({ extension: "js" });
+              fs.ensureFileSync(tempFileName);
+              fs.writeFileSync(tempFileName, content);
+
+              return wrapServer(moduleId, require(tempFileName), {
+                displayName: Path.relative(cwd, modulePath)
+              });
+            } else {
+              return wrapServer(moduleId, require(modulePath), {
+                displayName: modulePath
+              });
+            }
+          }
         );
       } catch (error) {
         console.error(error);
@@ -73,6 +86,7 @@ export async function start() {
   });
   const compiler = webpack(webpackConfig);
 
+  app.use(uicliMiddleware(() => serverWrappers));
   app.use(webpackDevMiddleware(compiler));
   app.use(webpackHotMiddleware(compiler, { reload: true }));
 
