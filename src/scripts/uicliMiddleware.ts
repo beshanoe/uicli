@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { UICLIServer } from "../wrappers/wrap";
+import { UICLIServer } from "../wrappers/wrapServer";
 
 export async function executeByUrl(
   serverWrappers: UICLIServer[],

@@ -22,8 +22,8 @@ export function pitch(this: any, request: any) {
       this.uicliRegisterNodeModule(this.uicliModuleId);
     }
     return `
-      const { client } = require("${require.resolve("../wrappers/wrap")}");
-      const wrapped = client("${this.uicliModuleId}");
+      const { wrapClient } = require("${require.resolve("../wrappers/wrapClient")}");
+      const wrapped = wrapClient("${this.uicliModuleId}");
       module.exports = wrapped;
     `;
   }
@@ -92,8 +92,8 @@ export function pitch(this: any, request: any) {
       this.uicliRegisterNodeModule(id, source);
     }
     const result = `
-      const { client } = require("${require.resolve("../wrappers/wrap")}");
-      const wrapped = client("${id}");
+      const { wrapClient } = require("${require.resolve("../wrappers/wrapClient")}");
+      const wrapped = wrapClient("${id}");
       module.exports = wrapped;
     `;
     callback(null, result);

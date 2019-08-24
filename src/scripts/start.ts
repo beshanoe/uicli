@@ -8,9 +8,9 @@ import webpackDevMiddleware from "webpack-dev-middleware";
 import webpackHotMiddleware from "webpack-hot-middleware";
 import * as WebSocket from "ws";
 import { createWebpackConfig } from "../webpack/createWebpackConfig";
-import { UICLIServer, wrapServer } from "../wrappers/wrap";
 import uicliMiddleware from "./uicliMiddleware";
 import tempy from "tempy";
+import { UICLIServer, wrapServer } from "../wrappers/wrapServer";
 
 const cwdRel = (path: string) => Path.resolve(process.cwd(), path);
 

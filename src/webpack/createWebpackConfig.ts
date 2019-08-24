@@ -96,7 +96,7 @@ export function createWebpackConfig(
 
       new webpack.ProvidePlugin({
         console: require.resolve("../wrappers/console"),
-        uicliSocket: require.resolve("../uicli")
+        uicliClient: require.resolve("../uicliClient")
       }),
 
       new HtmlWebpackPlugin({ templateContent: indexHtml() }),

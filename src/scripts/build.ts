@@ -1,10 +1,8 @@
-import webpack from "webpack";
-import { createWebpackConfig } from "../webpack/createWebpackConfig";
-import * as Path from "path";
 import MemoryFS from "memory-fs";
+import * as Path from "path";
+import webpack from "webpack";
 import { createShellWebpackConfig } from "../webpack/createShellWebpackConfig";
-import { wrapServer, UICLIServer } from "../wrappers/wrap";
-import { string } from "prop-types";
+import { createWebpackConfig } from "../webpack/createWebpackConfig";
 
 const cwdRel = (...paths: string[]) => Path.resolve(process.cwd(), ...paths);
 
@@ -87,7 +85,7 @@ export async function build() {
     virtuals: {
       ...virtualModules,
       [serverWrappersModulePath]: `
-        import { wrapServer } from "${require.resolve("../wrappers/wrap")}";
+        import { wrapServer } from "${require.resolve("../wrappers/wrapServer")}";
         export default [${serverWrappersSources.join(",")}]
       `,
       [buildAssetsModulePath]: `export default ${JSON.stringify(buildFiles)}`
