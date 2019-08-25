@@ -17,7 +17,9 @@ const mimeTypeByExt = {
   html: "text/html"
 };
 
-export default async function staticServer(options: StaticServerOptions) {
+export default async function staticServer(options: StaticServerOptions = {}) {
+  const { port = 4000 } = options;
+
   const server = http.createServer((req, res) => {
     if (req.method === "POST") {
       let rawBody: string;
@@ -89,5 +91,5 @@ export default async function staticServer(options: StaticServerOptions) {
     }
   );
 
-  server.listen(3000, () => console.log("Example app listening on port 3000!"));
+  server.listen(port, () => console.log(`Example app listening on port ${port}!`));
 }

@@ -1,3 +1,4 @@
 {
-  "nodeSide": ["fs-extra"]
+  "nodeSide": ["fs-extra"],
+  "entry": "test-app/index"
 }

@@ -24,7 +24,7 @@ export function createShellWebpackConfig(
     context: cwd,
     devtool: false,
     entry: {
-      main: [entry]
+      shell: [entry]
     },
     output: { path: Path.join(cwd, "build"), libraryTarget: "commonjs2" },
     resolve: {

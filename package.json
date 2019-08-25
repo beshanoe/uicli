@@ -4,8 +4,12 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "watch": "yarn tsc --watch"
+    "build": "tsc",
+    "watch": "tsc --watch"
   },
+  "files": [
+    "lib"
+  ],
   "dependencies": {
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",

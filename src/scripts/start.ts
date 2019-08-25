@@ -3,19 +3,20 @@ import express from "express";
 import * as fs from "fs-extra";
 import * as http from "http";
 import * as Path from "path";
+import tempy from "tempy";
 import webpack from "webpack";
 import webpackDevMiddleware from "webpack-dev-middleware";
 import webpackHotMiddleware from "webpack-hot-middleware";
 import * as WebSocket from "ws";
 import { createWebpackConfig } from "../webpack/createWebpackConfig";
-import uicliMiddleware from "./uicliMiddleware";
-import tempy from "tempy";
 import { UICLIServer, wrapServer } from "../wrappers/wrapServer";
+import { getConfig } from "./config";
+import uicliMiddleware from "./uicliMiddleware";
 
 const cwdRel = (path: string) => Path.resolve(process.cwd(), path);
 
 export async function start() {
-  const config = require(cwdRel("uicli.json")) as { nodeSide: string[] };
+  const config = getConfig(cwdRel("uicli.json"));
 
   const app = express();
   const server = http.createServer(app);
@@ -58,7 +59,7 @@ export async function start() {
   const webpackConfig = createWebpackConfig({
     mode: "dev",
     cwd,
-    entry: "./test-app/index",
+    entry: config.entry,
     nodeSideNodeModules: config.nodeSide,
     onNodeSideModules(modules) {
       try {

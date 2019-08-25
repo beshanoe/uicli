@@ -8,7 +8,9 @@ export class UICLIClient {
   uicliSocket: WebSocket;
 
   constructor() {
-    this.uicliSocket = new WebSocket("ws://localhost:3000/__uicli");
+    this.uicliSocket = new WebSocket(
+      `ws://${window.location.host}:${window.location.port}/__uicli`
+    );
     this.uicliSocket.addEventListener("message", event => {
       const parsed = JSON.parse(event.data);
       if (parsed.type === "callback") {

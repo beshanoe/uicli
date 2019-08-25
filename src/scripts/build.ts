@@ -3,6 +3,7 @@ import * as Path from "path";
 import webpack from "webpack";
 import { createShellWebpackConfig } from "../webpack/createShellWebpackConfig";
 import { createWebpackConfig } from "../webpack/createWebpackConfig";
+import { getConfig } from "./config";
 
 const cwdRel = (...paths: string[]) => Path.resolve(process.cwd(), ...paths);
 
@@ -17,7 +18,7 @@ const runWebpack = (compiler: webpack.Compiler) =>
   });
 
 export async function build() {
-  const config = require(cwdRel("uicli.json")) as { nodeSide: string[] };
+  const config = getConfig(cwdRel("uicli.json"));
 
   const cwd = process.cwd();
 
@@ -30,7 +31,7 @@ export async function build() {
   const webpackConfig = createWebpackConfig({
     mode: "prod",
     cwd,
-    entry: "./test-app/index",
+    entry: config.entry,
     nodeSideNodeModules: config.nodeSide,
     onNodeSideModules(modules) {
       try {
@@ -85,7 +86,9 @@ export async function build() {
     virtuals: {
       ...virtualModules,
       [serverWrappersModulePath]: `
-        import { wrapServer } from "${require.resolve("../wrappers/wrapServer")}";
+        import { wrapServer } from "${require.resolve(
+          "../wrappers/wrapServer"
+        )}";
         export default [${serverWrappersSources.join(",")}]
       `,
       [buildAssetsModulePath]: `export default ${JSON.stringify(buildFiles)}`
