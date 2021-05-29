@@ -38,7 +38,7 @@
     "webpack-dev-middleware": "^3.7.0",
     "webpack-hot-middleware": "^2.25.0",
     "webpack-virtual-modules": "^0.1.11",
-    "ws": "^7.1.2",
+    "ws": "^7.4.6",
     "yarn": "^1.17.3"
   },
   "devDependencies": {
